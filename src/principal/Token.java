@@ -1,3 +1,4 @@
+package principal;
 
 public class Token {
 	private double tokenInicial;
@@ -5,7 +6,6 @@ public class Token {
 	
 	private String[] tipoDeAcao; //Valida/Atribui/Remove
 	
-	private double 
-	
+	private double perna;
 	
 }
