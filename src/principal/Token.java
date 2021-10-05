@@ -3,9 +3,9 @@ package principal;
 public class Token {
 	private double tokenInicial;
 	private double tokenFinal;
-	
-	private String[] tipoDeAcao; //Valida/Atribui/Remove
-	
+
+	private String[] tipoDeAcao; // Valida/Atribui/Remove
+
 	private double perna;
 
 	public double getTokenInicial() {
@@ -39,5 +39,5 @@ public class Token {
 	public void setPerna(double perna) {
 		this.perna = perna;
 	}
-	
+
 }
