@@ -26,14 +26,48 @@ public class Principal {
 				   if(Character.isLetter(caracter)) {
 					   System.out.println("letra: "+caracter);
 				   }
-					if(Character.isDigit(caracter)) {
-						   System.out.println("digito: "+caracter);
+				   else if(Character.isDigit(caracter)) {
+					   System.out.println("digito: "+caracter);
 				   }
-				  
+				   else if(isOperador(caracter)) {
+					   System.out.println("operador: "+caracter);
+				   }
+				   else if(isAtribuicao(caracter)) {
+					   System.out.println("atribuicao: "+caracter);
+				   }
 				}
 			}
 			continua=false;
 		}
 	}
 	
+	public static boolean isAtribuicao(char caracter) {
+		if (caracter == "=".charAt(0)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean isOperador(char caracter) {
+		if(
+			caracter == "+".charAt(0) ||
+			caracter == "-".charAt(0) ||
+			caracter == "/".charAt(0) ||
+			caracter == "*".charAt(0)
+		) {
+			return true;
+		}
+		return false;
+	}
+	
 }
+
+
+
+
+
+
+
+
+
+
