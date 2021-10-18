@@ -1,4 +1,9 @@
-if (a == b) {
-	a = a + 2;
+int a = 0 ;
+int b = 5 ;
+int varTeste = 1;
+
+if ( a == b ) {
+	a = a + 2 ;
 }
-A a A b C BbbB
+
+#$¨&*
