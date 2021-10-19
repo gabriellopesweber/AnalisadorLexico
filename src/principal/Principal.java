@@ -16,20 +16,21 @@ public class Principal {
 	public static void percorreTexto(List<String> linhas) {
 		boolean continua = true;
 
+		
+		
 		while (continua) {
 			for (String linha : linhas) {
-
-				// pula linha vazia
-				if (linha.replaceAll("\\s", "").length() == 0) {
-					continue;
-				}
+				
+				if (linha.replaceAll("\\s", "").length() == 0) { continue; } // pula linha vazia
 
 				String[] palavras = linha.split(" ");
+				
+				
+				List<Token> linha_com_token;
 
 				for (String palavra : palavras) {
 
 					System.out.println(" --" + palavra + "-- ");
-
 					palavra = palavra.replaceAll("\\s", "");
 
 					if (isOperadorLogico(palavra)) {
@@ -49,9 +50,12 @@ public class Principal {
 					} else {
 						System.err.println("Palavra não encontrada: " + palavra);
 					}
-
+					
+					// CRIANDO OBJ TOKEN, SALVANDO NO LIST
 				}
 				System.out.println("");
+	
+				// VERIFICAR SINTAXE DA LINHA
 			}
 			continua = false;
 		}
