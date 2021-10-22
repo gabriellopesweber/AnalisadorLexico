@@ -1,9 +1,10 @@
-package principal;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Principal {
@@ -16,52 +17,68 @@ public class Principal {
 	public static void percorreTexto(List<String> linhas) {
 		boolean continua = true;
 
-		
-		
+		ArrayList<Token> linha_com_token = new ArrayList<Token>();
+		Identificador a = new Identificador();
+
+		int cont = 0;
 		while (continua) {
 			for (String linha : linhas) {
-				
-				if (linha.replaceAll("\\s", "").length() == 0) { continue; } // pula linha vazia
+
+				if (linha.replaceAll("\\s", "").length() == 0) {
+					continue;
+				} // pula linha vazia
 
 				String[] palavras = linha.split(" ");
-				
-				
-				List<Token> linha_com_token;
 
 				for (String palavra : palavras) {
-
-					System.out.println(" --" + palavra + "-- ");
+					Token token = new Token();
 					palavra = palavra.replaceAll("\\s", "");
-
 					if (isOperadorLogico(palavra)) {
-						System.out.println("Operador Logico: " + palavra);
-					} else if (isReservada(palavra)) {
-						System.out.println("Palavra Reservada: " + palavra);
-					} else if (isOperadorAritmetico(palavra)) {
-						System.out.println("Operador Aritmetico: " + palavra);
-					} else if (isAtribuicao(palavra)) {
-						System.out.println("Atribuicao: " + palavra);
-					} else if (Character.isDigit(palavra.charAt(0))) {
-						System.out.println("Número: " + palavra);
-					} else if (Character.isLetter(palavra.charAt(0))) {
-						System.out.println("Identificador: " + palavra);
+						token.setTipo(a.OPERADOR_LOGICO);
 					} else if (isPrimitivo(palavra)) {
-						System.out.println("Palavra Primitiva: " + palavra);
+						token.setTipo(a.PALAVRA_PRIMITIVA);
+					} else if (isReservada(palavra)) {
+						token.setTipo(a.PALAVRA_RESERVADA);
+					} else if (isOperadorAritmetico(palavra)) {
+						token.setTipo(a.OPERADORA_ARITMETICO);
+					} else if (isAtribuicao(palavra)) {
+						token.setTipo(a.ATRIBUICAO);
+					} else if (Character.isDigit(palavra.charAt(0))) {
+						token.setTipo(a.NUMERO);
+					} else if (Character.isLetter(palavra.charAt(0))) {
+						token.setTipo(a.IDENTIFICADOR);
 					} else {
-						System.err.println("Palavra não encontrada: " + palavra);
+						token.setTipo(a.DESCONHECIDO);
 					}
-					
-					// CRIANDO OBJ TOKEN, SALVANDO NO LIST
+					token.setTexto(palavra);
+					token.setLinha(cont);
+					linha_com_token.add(token);
+					cont++;
 				}
-				System.out.println("");
-	
+
 				// VERIFICAR SINTAXE DA LINHA
 			}
 			continua = false;
+			System.out.println("-------------CONTEUDO_TOKEN-------------");
+			for (int i = 0; i < linha_com_token.size(); i++) {
+				if (!((i + 1) == linha_com_token.size())) {
+					System.out.println("Item: " + linha_com_token.get(i).getTexto() + "\nTipo: "
+							+ linha_com_token.get(i).getTipo());
+					if (!(linha_com_token.get(i).getTipo().equalsIgnoreCase(a.PALAVRA_PRIMITIVA)
+							&& linha_com_token.get(i + 1).getTipo().equalsIgnoreCase(a.IDENTIFICADOR))) {
+						System.err.println("Ocorreu um erro: " + linha_com_token.get(i).getTexto());
+					} else if (!(linha_com_token.get(i).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
+							&& (linha_com_token.get(i + 1).getTipo().equalsIgnoreCase(a.NUMERO)
+									|| linha_com_token.get(i + 1).getTipo().equalsIgnoreCase(a.STRING)))) {
+						System.err.println("Ocorreu um erro: " + linha_com_token.get(i).getTexto());
+					}
+				}
+			}
+			System.out.println("------------------FIM-------------------");
 		}
 	}
 
-	// verifica se é uma palavra reservada
+	// verifica se ï¿½ uma palavra reservada
 	public static boolean isReservada(String palavra) {
 
 		if (palavra.equalsIgnoreCase("if") || palavra.equalsIgnoreCase("for") || palavra.equalsIgnoreCase("while")
@@ -90,7 +107,7 @@ public class Principal {
 		return false;
 	}
 
-	// verifica se é uma atribuição
+	// verifica se ï¿½ uma atribuiï¿½ï¿½o
 	public static boolean isAtribuicao(String palavra) {
 		if (palavra.equalsIgnoreCase("=")) {
 			return true;
@@ -98,7 +115,7 @@ public class Principal {
 		return false;
 	}
 
-	// verifica se é um operador
+	// verifica se ï¿½ um operador
 	public static boolean isOperadorAritmetico(String palavra) {
 		if (palavra.equalsIgnoreCase("+") || palavra.equalsIgnoreCase("-") || palavra.equalsIgnoreCase("/")
 				|| palavra.equalsIgnoreCase("*")) {

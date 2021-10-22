@@ -1,11 +1,18 @@
-package principal;
 
 public class Token {
-	
+
 	private String tipo;
 	private String texto;
+	private int linha;
 
-	
+	public int getLinha() {
+		return linha;
+	}
+
+	public void setLinha(int cont) {
+		this.linha = cont;
+	}
+
 	public String getTipo() {
 		return tipo;
 	}
@@ -21,7 +28,5 @@ public class Token {
 	public void setTexto(String texto) {
 		this.texto = texto;
 	}
-	
-	
-			
+
 }
