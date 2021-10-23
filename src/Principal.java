@@ -1,13 +1,13 @@
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class Principal {
+
+	static Identificador a = new Identificador();
 
 	public static void main(String[] args) throws IOException {
 		List<String> linhas = Files.readAllLines(Paths.get("teste.txt"), Charset.defaultCharset());
@@ -17,13 +17,10 @@ public class Principal {
 	public static void percorreTexto(List<String> linhas) {
 		boolean continua = true;
 
-		Identificador a = new Identificador();
-
-		int cont = 0;
+		int cont = 1;
 		while (continua) {
 			for (String linha : linhas) {
 				ArrayList<Token> linha_com_token = new ArrayList<Token>();
-
 
 				if (linha.replaceAll("\\s", "").length() == 0) {
 					continue;
@@ -71,21 +68,40 @@ public class Principal {
 //					System.err.println("declaração de variavel incorreta !"+linha_com_token.get(0).getLinha());
 //				}
 				System.out.println(linhaToString(linha_com_token));
+				if(isDeclaracao(linha_com_token)) {
+					System.out.println("Show de bola");
+				} else {
+					System.err.println("Erro na declaracao: " + linha_com_token.get(0).getLinha());
+				}
 
 			}
-			
+
 			continua = false;
 		}
 	}
 
 	public static String linhaToString(ArrayList<Token> linha) {
-		String str= linha.get(0).getLinha()+" | ";
+		String str = linha.get(0).getLinha() + " - ";
 		for (Token elemento : linha) {
-			str += elemento.getTexto()+" | "+elemento.getTipo() + "   ";
+			str += elemento.getTexto() + " <=[" + elemento.getTipo() + "] ";
 		}
 		return str;
 	}
-	
+
+	public static boolean isDeclaracao(ArrayList<Token> linha) {
+		if (linha.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_PRIMITIVA)
+				&& linha.get(1).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
+				&& linha.get(2).getTipo().equalsIgnoreCase(a.ATRIBUICAO)
+				&& (linha.get(3).getTipo().equalsIgnoreCase(a.NUMERO)
+						|| linha.get(3).getTipo().equalsIgnoreCase(a.STRING))
+				&& linha.get(4).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+				&& linha.get(4).getTexto().equalsIgnoreCase(";")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	// verifica se é uma palavra reservada
 	public static boolean isReservada(String palavra) {
 
