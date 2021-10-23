@@ -17,12 +17,13 @@ public class Principal {
 	public static void percorreTexto(List<String> linhas) {
 		boolean continua = true;
 
-		ArrayList<Token> linha_com_token = new ArrayList<Token>();
 		Identificador a = new Identificador();
 
 		int cont = 0;
 		while (continua) {
 			for (String linha : linhas) {
+				ArrayList<Token> linha_com_token = new ArrayList<Token>();
+
 
 				if (linha.replaceAll("\\s", "").length() == 0) {
 					continue;
@@ -53,32 +54,39 @@ public class Principal {
 					token.setTexto(palavra);
 					token.setLinha(cont);
 					linha_com_token.add(token);
-					cont++;
 				}
+				cont++;
 
 				// VERIFICAR SINTAXE DA LINHA
+//				if (
+//						linha_com_token.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_PRIMITIVA) && 
+//						linha_com_token.get(1).getTipo().equalsIgnoreCase(a.IDENTIFICADOR) && 
+//						linha_com_token.get(2).getTipo().equalsIgnoreCase(a.ATRIBUICAO) && 
+//						linha_com_token.get(3).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA) && 
+//						linha_com_token.get(3).getTexto().equalsIgnoreCase(";")						
+//					) {
+//					System.out.println("declaração de variavel correta!");
+//					
+//				}else {
+//					System.err.println("declaração de variavel incorreta !"+linha_com_token.get(0).getLinha());
+//				}
+				System.out.println(linhaToString(linha_com_token));
+
 			}
+			
 			continua = false;
-			System.out.println("-------------CONTEUDO_TOKEN-------------");
-			for (int i = 0; i < linha_com_token.size(); i++) {
-				if (!((i + 1) == linha_com_token.size())) {
-					System.out.println("Item: " + linha_com_token.get(i).getTexto() + "\nTipo: "
-							+ linha_com_token.get(i).getTipo());
-					if (!(linha_com_token.get(i).getTipo().equalsIgnoreCase(a.PALAVRA_PRIMITIVA)
-							&& linha_com_token.get(i + 1).getTipo().equalsIgnoreCase(a.IDENTIFICADOR))) {
-						System.err.println("Ocorreu um erro: " + linha_com_token.get(i).getTexto());
-					} else if (!(linha_com_token.get(i).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
-							&& (linha_com_token.get(i + 1).getTipo().equalsIgnoreCase(a.NUMERO)
-									|| linha_com_token.get(i + 1).getTipo().equalsIgnoreCase(a.STRING)))) {
-						System.err.println("Ocorreu um erro: " + linha_com_token.get(i).getTexto());
-					}
-				}
-			}
-			System.out.println("------------------FIM-------------------");
 		}
 	}
 
-	// verifica se ï¿½ uma palavra reservada
+	public static String linhaToString(ArrayList<Token> linha) {
+		String str= linha.get(0).getLinha()+" | ";
+		for (Token elemento : linha) {
+			str += elemento.getTexto()+" | "+elemento.getTipo() + "   ";
+		}
+		return str;
+	}
+	
+	// verifica se é uma palavra reservada
 	public static boolean isReservada(String palavra) {
 
 		if (palavra.equalsIgnoreCase("if") || palavra.equalsIgnoreCase("for") || palavra.equalsIgnoreCase("while")
@@ -107,7 +115,7 @@ public class Principal {
 		return false;
 	}
 
-	// verifica se ï¿½ uma atribuiï¿½ï¿½o
+	// verifica se é uma atribuição
 	public static boolean isAtribuicao(String palavra) {
 		if (palavra.equalsIgnoreCase("=")) {
 			return true;
@@ -115,7 +123,7 @@ public class Principal {
 		return false;
 	}
 
-	// verifica se ï¿½ um operador
+	// verifica se é um operador
 	public static boolean isOperadorAritmetico(String palavra) {
 		if (palavra.equalsIgnoreCase("+") || palavra.equalsIgnoreCase("-") || palavra.equalsIgnoreCase("/")
 				|| palavra.equalsIgnoreCase("*")) {

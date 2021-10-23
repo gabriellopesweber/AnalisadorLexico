@@ -12,3 +12,7 @@ if ( a == b ) {
 for ( int i = 0 ; a > b ; i++ ) {
 	a++
 }
+
+	-- tratamento de erros --
+
+// declaração de variavel = [primitivo], [identificador], [atribuicao], [reservada]->";"
