@@ -14,7 +14,7 @@ public class Principal {
 		percorreTexto(linhas);
 	}
 
-	public static void percorreTexto(List<String> linhas) {
+	private static void percorreTexto(List<String> linhas) {
 		boolean continua = true;
 
 		int cont = 1;
@@ -43,6 +43,8 @@ public class Principal {
 						token.setTipo(a.ATRIBUICAO);
 					} else if (Character.isDigit(palavra.charAt(0))) {
 						token.setTipo(a.NUMERO);
+					} else if (isString(palavra)) {
+						token.setTipo(a.STRING);
 					} else if (Character.isLetter(palavra.charAt(0))) {
 						token.setTipo(a.IDENTIFICADOR);
 					} else {
@@ -68,10 +70,8 @@ public class Principal {
 //					System.err.println("declaração de variavel incorreta !"+linha_com_token.get(0).getLinha());
 //				}
 				System.out.println(linhaToString(linha_com_token));
-				if(isDeclaracao(linha_com_token)) {
-					System.out.println("Show de bola");
-				} else {
-					System.err.println("Erro na declaracao: " + linha_com_token.get(0).getLinha());
+				if (!isDeclaracao(linha_com_token) && !isAtribuicao(linha_com_token)) {
+					System.err.println("Erro de sintaxe na linha " + linha_com_token.get(0).getLinha());
 				}
 
 			}
@@ -80,7 +80,7 @@ public class Principal {
 		}
 	}
 
-	public static String linhaToString(ArrayList<Token> linha) {
+	private static String linhaToString(ArrayList<Token> linha) {
 		String str = linha.get(0).getLinha() + " - ";
 		for (Token elemento : linha) {
 			str += elemento.getTexto() + " <=[" + elemento.getTipo() + "] ";
@@ -88,22 +88,37 @@ public class Principal {
 		return str;
 	}
 
-	public static boolean isDeclaracao(ArrayList<Token> linha) {
-		if (linha.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_PRIMITIVA)
-				&& linha.get(1).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
-				&& linha.get(2).getTipo().equalsIgnoreCase(a.ATRIBUICAO)
-				&& (linha.get(3).getTipo().equalsIgnoreCase(a.NUMERO)
-						|| linha.get(3).getTipo().equalsIgnoreCase(a.STRING))
-				&& linha.get(4).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
-				&& linha.get(4).getTexto().equalsIgnoreCase(";")) {
-			return true;
-		} else {
-			return false;
+	private static boolean isAtribuicao(ArrayList<Token> elemento) {
+		if (elemento.size() > 1) {
+			if (elemento.get(0).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
+					&& elemento.get(1).getTipo().equalsIgnoreCase(a.ATRIBUICAO)
+					&& (elemento.get(2).getTipo().equalsIgnoreCase(a.NUMERO)
+							|| elemento.get(2).getTipo().equalsIgnoreCase(a.STRING))
+					&& elemento.get(3).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+					&& elemento.get(3).getTexto().equalsIgnoreCase(";")) {
+				return true;
+			}
 		}
+		return false;
+	}
+
+	private static boolean isDeclaracao(ArrayList<Token> elemento) {
+		if (elemento.size() > 1) {
+			if (elemento.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_PRIMITIVA)
+					&& elemento.get(1).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
+					&& elemento.get(2).getTipo().equalsIgnoreCase(a.ATRIBUICAO)
+					&& (elemento.get(3).getTipo().equalsIgnoreCase(a.NUMERO)
+							|| elemento.get(3).getTipo().equalsIgnoreCase(a.STRING))
+					&& elemento.get(4).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+					&& elemento.get(4).getTexto().equalsIgnoreCase(";")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// verifica se é uma palavra reservada
-	public static boolean isReservada(String palavra) {
+	private static boolean isReservada(String palavra) {
 
 		if (palavra.equalsIgnoreCase("if") || palavra.equalsIgnoreCase("for") || palavra.equalsIgnoreCase("while")
 				|| palavra.equalsIgnoreCase(";") || palavra.equalsIgnoreCase("{") || palavra.equalsIgnoreCase("}")
@@ -115,7 +130,7 @@ public class Principal {
 		return false;
 	}
 
-	public static boolean isPrimitivo(String palavra) {
+	private static boolean isPrimitivo(String palavra) {
 		if (palavra.equalsIgnoreCase("float") || palavra.equalsIgnoreCase("int") || palavra.equalsIgnoreCase("string")
 				|| palavra.equalsIgnoreCase("double") || palavra.equalsIgnoreCase("boolean")) {
 			return true;
@@ -123,7 +138,7 @@ public class Principal {
 		return false;
 	}
 
-	public static boolean isOperadorLogico(String palavra) {
+	private static boolean isOperadorLogico(String palavra) {
 		if (palavra.equalsIgnoreCase("<") || palavra.equalsIgnoreCase(">") || palavra.equalsIgnoreCase("=>")
 				|| palavra.equalsIgnoreCase("<=") || palavra.equalsIgnoreCase("==")) {
 			return true;
@@ -137,6 +152,27 @@ public class Principal {
 			return true;
 		}
 		return false;
+	}
+
+	public static boolean isString(String palavra) {
+		boolean pri = false;
+		boolean ult = false;
+		for (int i = 0, n = palavra.length(); i < n; i++) {
+			char c = palavra.charAt(i);
+			if (c == '"') {
+				if (i == 0) {
+					pri = true;
+				} else if (i == (n - 1)) {
+					ult = true;
+				}
+			}
+		}
+		if (pri == true && ult == true) {
+			return true;
+		} else {
+			return false;
+		}
+
 	}
 
 	// verifica se é um operador
