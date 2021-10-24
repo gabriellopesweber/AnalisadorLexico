@@ -9,7 +9,7 @@ public class Principal {
 
 	static Identificador a = new Identificador();
 	static String tipo_erro;
-	
+
 	public static void main(String[] args) throws IOException {
 		List<String> linhas = Files.readAllLines(Paths.get("teste.txt"), Charset.defaultCharset());
 		percorreTexto(linhas);
@@ -60,39 +60,43 @@ public class Principal {
 				// VERIFICAR SINTAXE DA LINHA
 				System.out.println(linhaToString(linha_com_token) + "\n");
 
-//				if (!isDeclaracao(linha_com_token) && !isAtribuicao(linha_com_token) && !isCondicao(linha_com_token)) {
-//					System.err.println("Erro: "+tipo_erro+" na linha " + linha_com_token.get(0).getLinha() + "\n");
-//				}
 				boolean achou_funcao = false;
-				
-				if(linha_com_token.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_PRIMITIVA)){
+
+				if (linha_com_token.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_PRIMITIVA)) {
 					if (!isDeclaracao(linha_com_token)) {
-						System.err.println("Erro: "+tipo_erro+" na linha " + linha_com_token.get(0).getLinha() + "\n");
+						System.err.println(
+								"Erro: " + tipo_erro + " na linha " + linha_com_token.get(0).getLinha() + "\n");
 						continue;
-					}else {
+					} else {
 						achou_funcao = true;
 					}
 				}
-				
-				
-				
-				if(linha_com_token.get(0).getTipo().equalsIgnoreCase(a.IDENTIFICADOR) && !achou_funcao && !isAtribuicao(linha_com_token)) {
-					System.err.println("Erro: "+tipo_erro+" na linha " + linha_com_token.get(0).getLinha() + "\n");
+
+				if (linha_com_token.get(0).getTipo().equalsIgnoreCase(a.IDENTIFICADOR) && !achou_funcao
+						&& !isAtribuicao(linha_com_token)) {
+					System.err.println("Erro: " + tipo_erro + " na linha " + linha_com_token.get(0).getLinha() + "\n");
 					continue;
-				}else {
+				} else {
 					achou_funcao = true;
 				}
-				
 
-				if(linha_com_token.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA) && !achou_funcao && !isCondicao(linha_com_token)) {
-					System.err.println("Erro: "+tipo_erro+" na linha " + linha_com_token.get(0).getLinha() + "\n");
+				if (linha_com_token.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+						&& linha_com_token.get(0).getTexto().equalsIgnoreCase("if") && !achou_funcao
+						&& !isCondicao(linha_com_token)) {
+					System.err.println("Erro: " + tipo_erro + " na linha " + linha_com_token.get(0).getLinha() + "\n");
 					continue;
-				}else {
+				} else {
 					achou_funcao = true;
 				}
-				
 
-
+				if (linha_com_token.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+						&& linha_com_token.get(0).getTexto().equalsIgnoreCase("for") && !achou_funcao
+						&& !isLoop(linha_com_token)) {
+					System.err.println("Erro: " + tipo_erro + " na linha " + linha_com_token.get(0).getLinha() + "\n");
+					continue;
+				} else {
+					achou_funcao = true;
+				}
 			}
 
 			continua = false;
@@ -107,10 +111,9 @@ public class Principal {
 		return str;
 	}
 
-	// Esta funcao realiza a analise da sintaxe do IF, onde pode ocorrer o cenario
-	// if ( a == b ) {
+	// Funcao responsavel pela analise do ArrayList passado por parametro, se a
+	// operacao executada é uma atribuicao correta.
 	private static boolean isCondicao(ArrayList<Token> elemento) {
-
 		if (elemento.size() > 1) {
 			if (elemento.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
 					&& (elemento.get(1).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
@@ -121,9 +124,9 @@ public class Principal {
 							|| elemento.get(elemento.size() - 1).getTexto().equalsIgnoreCase("{"))) {
 				if (elemento.get(2).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
 						&& elemento.get(3).getTipo().equalsIgnoreCase(a.OPERADOR_LOGICO)
-						&& (elemento.get(4).getTipo().equalsIgnoreCase(a.IDENTIFICADOR) ||
-								elemento.get(4).getTipo().equalsIgnoreCase(a.NUMERO) ||
-								elemento.get(4).getTipo().equalsIgnoreCase(a.STRING))) {
+						&& (elemento.get(4).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
+								|| elemento.get(4).getTipo().equalsIgnoreCase(a.NUMERO)
+								|| elemento.get(4).getTipo().equalsIgnoreCase(a.STRING))) {
 					return true;
 				} else {
 					tipo_erro = "condicao invalida";
@@ -137,9 +140,56 @@ public class Principal {
 
 	}
 
-	private static boolean isAtribuicao(ArrayList<Token> elemento) { // Pensar num metodo mais composto, pois, caso
-																		// tenha a inserção de mais uma variavel, pode
-																		// gerar erro. Exemplo a = a + 2 + 2 + 2 + 2 ;
+	// Funcao responsavel pela analise do ArrayList passado por parametro, se a
+	// operacao executada é um loop correto.
+	private static boolean isLoop(ArrayList<Token> elemento) { // Falta ajustar as possições e terminar a logica.
+		if (elemento.size() > 1) {
+			if (elemento.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+					&& (elemento.get(1).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+							|| elemento.get(1).getTexto().equalsIgnoreCase("("))
+					&& (elemento.get(elemento.size() - 2).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+							|| elemento.get(elemento.size() - 2).getTexto().equalsIgnoreCase(")"))
+					&& (elemento.get(elemento.size() - 1).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+							|| elemento.get(elemento.size() - 1).getTexto().equalsIgnoreCase("{"))) {
+				if (elemento.get(2).getTipo().equalsIgnoreCase(a.PALAVRA_PRIMITIVA)
+						&& elemento.get(3).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
+						&& elemento.get(4).getTipo().equalsIgnoreCase(a.ATRIBUICAO)
+						&& (elemento.get(4).getTipo().equalsIgnoreCase(a.NUMERO)
+								|| elemento.get(4).getTipo().equalsIgnoreCase(a.STRING))
+						&& elemento.get(4).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+						&& elemento.get(4).getTexto().equalsIgnoreCase(";")) {
+					if (elemento.get(4).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
+							&& elemento.get(4).getTipo().equalsIgnoreCase(a.OPERADOR_LOGICO)
+							&& elemento.get(4).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
+							&& elemento.get(4).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+							&& elemento.get(4).getTexto().equalsIgnoreCase(";")
+							&& elemento.get(4).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)) {
+						return true;
+					} else {
+						tipo_erro = "condicao invalida";
+						return false;
+
+					}
+				} else {
+					tipo_erro = "condicao invalida";
+					return false;
+
+				}
+			} else {
+				tipo_erro = "condicao invalida";
+				return false;
+
+			}
+
+		}
+		return false;
+
+	}
+
+	// Funcao responsavel pela analise do ArrayList passado por parametro, se a
+	// operacao executada é uma atribuicao correta.
+	private static boolean isAtribuicao(ArrayList<Token> elemento) {
+		System.out.println(" -- Estou aqui.");
 		if (elemento.size() >= 4) {
 			if (elemento.get(0).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
 					&& elemento.get(1).getTipo().equalsIgnoreCase(a.ATRIBUICAO)
@@ -154,18 +204,18 @@ public class Principal {
 		return false;
 	}
 
+	// Funcao responsavel pela analise do ArrayList passado por parametro, se a
+	// operacao executada é uma declaracao correta.
 	private static boolean isDeclaracao(ArrayList<Token> elemento) {
 		try {
-			if (elemento.size() >=5) {
+			if (elemento.size() >= 5) {
 				if (elemento.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_PRIMITIVA)
 						&& elemento.get(1).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
 						&& elemento.get(2).getTipo().equalsIgnoreCase(a.ATRIBUICAO)
 						&& (elemento.get(3).getTipo().equalsIgnoreCase(a.NUMERO)
-								|| elemento.get(3).getTipo().equalsIgnoreCase(a.STRING)
-							)
+								|| elemento.get(3).getTipo().equalsIgnoreCase(a.STRING))
 						&& elemento.get(4).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
-						&& elemento.get(4).getTexto().equalsIgnoreCase(";")
-					) {
+						&& elemento.get(4).getTexto().equalsIgnoreCase(";")) {
 					return true;
 				}
 			}
@@ -177,9 +227,9 @@ public class Principal {
 		}
 	}
 
-	// verifica se é uma palavra reservada
+	// Funcao responsavel pela analise da palavra passada por parametro, se é uma
+	// palavra reservada.
 	private static boolean isReservada(String palavra) {
-
 		if (palavra.equalsIgnoreCase("if") || palavra.equalsIgnoreCase("for") || palavra.equalsIgnoreCase("while")
 				|| palavra.equalsIgnoreCase(";") || palavra.equalsIgnoreCase("{") || palavra.equalsIgnoreCase("}")
 				|| palavra.equalsIgnoreCase("[") || palavra.equalsIgnoreCase("]") || palavra.equalsIgnoreCase("(")
@@ -190,6 +240,8 @@ public class Principal {
 		return false;
 	}
 
+	// Funcao responsavel pela analise da palavra passada por parametro, se é um
+	// valor primitivo.
 	private static boolean isPrimitivo(String palavra) {
 		if (palavra.equalsIgnoreCase("float") || palavra.equalsIgnoreCase("int") || palavra.equalsIgnoreCase("string")
 				|| palavra.equalsIgnoreCase("double") || palavra.equalsIgnoreCase("boolean")) {
@@ -198,6 +250,8 @@ public class Principal {
 		return false;
 	}
 
+	// Funcao responsavel pela analise da palavra passada por parametro, se é um
+	// operador logico.
 	private static boolean isOperadorLogico(String palavra) {
 		if (palavra.equalsIgnoreCase("<") || palavra.equalsIgnoreCase(">") || palavra.equalsIgnoreCase("=>")
 				|| palavra.equalsIgnoreCase("<=") || palavra.equalsIgnoreCase("==") || palavra.equalsIgnoreCase("&&")
@@ -207,7 +261,8 @@ public class Principal {
 		return false;
 	}
 
-	// verifica se é uma atribuição
+	// Funcao responsavel pela analise da palavra passada por parametro, se é uma
+	// atribuicao.
 	public static boolean isAtribuicao(String palavra) {
 		if (palavra.equalsIgnoreCase("=")) {
 			return true;
@@ -215,6 +270,8 @@ public class Principal {
 		return false;
 	}
 
+	// Funcao responsavel pela analise da palavra passada por parametro, se é uma
+	// String.
 	public static boolean isString(String palavra) {
 		boolean pri = false;
 		boolean ult = false;
@@ -236,7 +293,8 @@ public class Principal {
 
 	}
 
-	// verifica se é um operador
+	// Funcao responsavel pela analise da palavra passada por parametro, se é um
+	// operador aritimetico.
 	public static boolean isOperadorAritmetico(String palavra) {
 		if (palavra.equalsIgnoreCase("+") || palavra.equalsIgnoreCase("-") || palavra.equalsIgnoreCase("/")
 				|| palavra.equalsIgnoreCase("*")) {
