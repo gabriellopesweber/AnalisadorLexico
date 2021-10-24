@@ -70,7 +70,7 @@ public class Principal {
 //					System.err.println("declaração de variavel incorreta !"+linha_com_token.get(0).getLinha());
 //				}
 				System.out.println(linhaToString(linha_com_token));
-				if (!isDeclaracao(linha_com_token) && !isAtribuicao(linha_com_token)) {
+				if (!isDeclaracao(linha_com_token) && !isAtribuicao(linha_com_token) && !isValidacao(linha_com_token)) {
 					System.err.println("Erro de sintaxe na linha " + linha_com_token.get(0).getLinha());
 				}
 
@@ -88,7 +88,38 @@ public class Principal {
 		return str;
 	}
 
-	private static boolean isAtribuicao(ArrayList<Token> elemento) {
+	private static boolean isValidacao(ArrayList<Token> elemento) { // Esta funcao realiza a analise da sintaxe do IF,
+																	// onde pode ocorrer o cenario if ( a == b ) {
+																	// ou if ( a == b || b == a ) { entre outros.
+																	// AINDA NAO COMPLETA.
+		if (elemento.size() > 1) {
+			if (elemento.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+					&& (elemento.get(1).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+							|| elemento.get(1).getTexto().equalsIgnoreCase("("))
+					&& (elemento.get(elemento.size() - 2).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+							|| elemento.get(elemento.size() - 2).getTexto().equalsIgnoreCase(")"))
+					&& (elemento.get(elemento.size() - 1).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+							|| elemento.get(elemento.size() - 1).getTexto().equalsIgnoreCase("{"))) {
+				if (elemento.get(2).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
+						&& elemento.get(3).getTipo().equalsIgnoreCase(a.OPERADOR_LOGICO)
+						&& (!elemento.get(3).getTexto().equalsIgnoreCase("||")
+								|| !elemento.get(3).getTexto().equalsIgnoreCase("&&"))
+						&& elemento.get(4).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)) {
+					return true;
+				} else {
+					return false;
+				}
+
+			}
+
+		}
+		return false;
+
+	}
+
+	private static boolean isAtribuicao(ArrayList<Token> elemento) { // Pensar num metodo mais composto, pois, caso
+																		// tenha a inserção de mais uma variavel, pode
+																		// gerar erro. Exemplo a = a + 2 + 2 + 2 + 2 ;
 		if (elemento.size() > 1) {
 			if (elemento.get(0).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
 					&& elemento.get(1).getTipo().equalsIgnoreCase(a.ATRIBUICAO)
@@ -140,7 +171,8 @@ public class Principal {
 
 	private static boolean isOperadorLogico(String palavra) {
 		if (palavra.equalsIgnoreCase("<") || palavra.equalsIgnoreCase(">") || palavra.equalsIgnoreCase("=>")
-				|| palavra.equalsIgnoreCase("<=") || palavra.equalsIgnoreCase("==")) {
+				|| palavra.equalsIgnoreCase("<=") || palavra.equalsIgnoreCase("==") || palavra.equalsIgnoreCase("&&")
+				|| palavra.equalsIgnoreCase("||")) {
 			return true;
 		}
 		return false;
