@@ -6,7 +6,7 @@ int varTeste = "asd" ;
 varTeste = "4" ;
 	a = 2 ;
 if ( a == b ) {
-	a = a + 2 + erro_Na_Linha 
+	a = a + 2 ; 
 }
 if ( varTeste != 2 ) {
 	a = a + 2 ;
