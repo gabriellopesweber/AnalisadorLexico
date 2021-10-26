@@ -25,15 +25,15 @@ public class Principal {
 
 				if (linha.replaceAll("\\s", "").length() == 0) { // pula linha vazia
 					continue;
-				} 
+				}
 
 				String[] palavras = linha.split(" ");
 
 				for (String palavra : palavras) {
-					
+
 					Token token = new Token();
 					palavra = palavra.replaceAll("\\s", "");
-					
+
 					if (isOperadorLogico(palavra)) {
 						token.setTipo(a.OPERADOR_LOGICO);
 					} else if (isPrimitivo(palavra)) {
@@ -59,19 +59,11 @@ public class Principal {
 				}
 				cont++;
 
-				
-				
-				
-				
-				
-				
 				// VERIFICAR SINTAXE DA LINHA
 				System.out.println(linhaToString(linha_com_token) + "\n");
 
 				boolean achou_funcao = false;
 
-				
-				
 				if (linha_com_token.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_PRIMITIVA)) {
 					if (!isDeclaracao(linha_com_token)) {
 						System.err.println(
@@ -80,48 +72,36 @@ public class Principal {
 					} else {
 						achou_funcao = true;
 					}
-				}	
-				
-				
+				}
+
 				if (linha_com_token.get(0).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)) {
 					if (!achou_funcao && !isAtribuicao(linha_com_token)) {
 						System.err.println("Erro: " + tipo_erro + " na linha " + linha_com_token.get(0).getLinha());
 						continue;
-					}else {
+					} else {
 						achou_funcao = true;
 					}
 				}
-	
-				
-				System.out.println("achou_funcao "+achou_funcao);
-				
-				if(linha_com_token.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)){
-										
-					if(linha_com_token.get(0).getTexto().equalsIgnoreCase("if") && !achou_funcao
+
+				if (linha_com_token.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)) {
+
+					if (linha_com_token.get(0).getTexto().equalsIgnoreCase("if") && !achou_funcao
 							&& !isCondicao(linha_com_token)) {
-						System.err.println("Erro: " + tipo_erro + " na linha " + linha_com_token.get(0).getLinha() + "\n");
+						System.err.println(
+								"Erro: " + tipo_erro + " na linha " + linha_com_token.get(0).getLinha() + "\n");
 						continue;
-					}else if(linha_com_token.get(0).getTexto().equalsIgnoreCase("for") 
-							&& !achou_funcao && !isLoop(linha_com_token)){
-						System.err.println("Erro: " + tipo_erro + " na linha " + linha_com_token.get(0).getLinha() + "\n");
+					} else if (linha_com_token.get(0).getTexto().equalsIgnoreCase("for") && !achou_funcao
+							&& !isLoop(linha_com_token)) {
+						System.err.println(
+								"Erro: " + tipo_erro + " na linha " + linha_com_token.get(0).getLinha() + "\n");
 						continue;
-					}else {
+					} else {
 						achou_funcao = true;
 					}
 				}
 				System.out.println("--------------------------------\n");
-				
-				
-				
-				
-				
-				
+
 			}
-			
-			
-			
-			
-			
 
 			continua = false;
 		}
@@ -138,7 +118,6 @@ public class Principal {
 	// Funcao responsavel pela analise do ArrayList passado por parametro, se a
 	// operacao executada é uma atribuicao correta.
 	private static boolean isCondicao(ArrayList<Token> elemento) {
-		System.out.println(" -- isCondicao.");
 
 		if (elemento.size() > 1) {
 			if (elemento.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
@@ -167,39 +146,54 @@ public class Principal {
 	}
 
 	// Funcao responsavel pela analise do ArrayList passado por parametro, se a
-	  // operacao executada é um loop correto.
-	  private static boolean isLoop(ArrayList<Token> elemento) { // Falta ajustar as possições e terminar a logica.
-	    System.out.println(" -- Analisando loop.");
-	    if (elemento.size() > 1 && elemento.size() <= 11) {
-	      if (elemento.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
-	          && (elemento.get(1).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
-	              || elemento.get(1).getTexto().equalsIgnoreCase("("))
-	          && (elemento.get(elemento.size() - 2).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
-	              || elemento.get(elemento.size() - 2).getTexto().equalsIgnoreCase(")"))
-	          && (elemento.get(elemento.size() - 1).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
-	              || elemento.get(elemento.size() - 1).getTexto().equalsIgnoreCase("{"))) {
-	        return true;
-	      } else {
-	        tipo_erro = "condicao invalida";
-	        return false;
+	// operacao executada é um loop correto.
+	private static boolean isLoop(ArrayList<Token> elemento) {
 
-	      }
-	    }
-	    return false;
+		if (elemento.size() > 1) {
+			if (elemento.get(0).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+					&& (elemento.get(1).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+							|| elemento.get(1).getTexto().equalsIgnoreCase("("))
+					&& (elemento.get(elemento.size() - 2).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+							|| elemento.get(elemento.size() - 2).getTexto().equalsIgnoreCase(")"))
+					&& (elemento.get(elemento.size() - 1).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+							|| elemento.get(elemento.size() - 1).getTexto().equalsIgnoreCase("{"))) {
+				return true;
+			} else {
+				tipo_erro = "loop invalido";
+				return false;
 
-	  }
+			}
+		}
+		tipo_erro = "loop invalido";
+		return false;
+
+	}
 
 	// Funcao responsavel pela analise do ArrayList passado por parametro, se a
 	// operacao executada é uma atribuicao correta.
 	private static boolean isAtribuicao(ArrayList<Token> elemento) {
-		System.out.println(" -- isAtribuicao.");
-		if (elemento.size() >= 4) {
+
+		if (elemento.size() == 4) {
 			if (elemento.get(0).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
 					&& elemento.get(1).getTipo().equalsIgnoreCase(a.ATRIBUICAO)
 					&& (elemento.get(2).getTipo().equalsIgnoreCase(a.NUMERO)
 							|| elemento.get(2).getTipo().equalsIgnoreCase(a.STRING))
 					&& elemento.get(3).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
 					&& elemento.get(3).getTexto().equalsIgnoreCase(";")) {
+				return true;
+			}
+		} else if (elemento.size() >= 6) {
+			if (elemento.get(0).getTipo().equalsIgnoreCase(a.IDENTIFICADOR)
+					&& elemento.get(1).getTipo().equalsIgnoreCase(a.ATRIBUICAO)
+					&& (elemento.get(2).getTipo().equalsIgnoreCase(a.NUMERO)
+							|| elemento.get(2).getTipo().equalsIgnoreCase(a.STRING)
+							|| elemento.get(2).getTipo().equalsIgnoreCase(a.IDENTIFICADOR))
+					&& elemento.get(3).getTipo().equalsIgnoreCase(a.OPERADORA_ARITMETICO)
+					&& (elemento.get(4).getTipo().equalsIgnoreCase(a.NUMERO)
+							|| elemento.get(4).getTipo().equalsIgnoreCase(a.STRING)
+							|| elemento.get(4).getTipo().equalsIgnoreCase(a.IDENTIFICADOR))
+					&& elemento.get(5).getTipo().equalsIgnoreCase(a.PALAVRA_RESERVADA)
+					&& elemento.get(5).getTexto().equalsIgnoreCase(";")) {
 				return true;
 			}
 		}
@@ -210,7 +204,6 @@ public class Principal {
 	// Funcao responsavel pela analise do ArrayList passado por parametro, se a
 	// operacao executada é uma declaracao correta.
 	private static boolean isDeclaracao(ArrayList<Token> elemento) {
-		System.out.println(" -- isDeclaracao.");
 
 		try {
 			if (elemento.size() >= 5) {
